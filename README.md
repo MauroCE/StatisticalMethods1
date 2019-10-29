@@ -7,6 +7,10 @@
 
 <!-- badges: end -->
 
+[![Build
+Status](https://travis-ci.com/MauroCE/StatisticalMethods1.svg?branch=master)](https://travis-ci.com/MauroCE/StatisticalMethods1)
+[![codecov](https://codecov.io/gh/MauroCE/StatisticalMethods1/branch/master/graph/badge.svg)](https://codecov.io/gh/MauroCE/StatisticalMethods1)
+
 The goal of StatisticalMethods1 is to …
 
 ## Installation
