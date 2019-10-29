@@ -5,7 +5,14 @@ output:
     toc: true
     toc_float: true
     toc_depth: 4
+fontsize: 15pt
 ---
+
+<style>
+    body .main-container {
+        max-width: 1500px;
+    }
+</style>
 
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
