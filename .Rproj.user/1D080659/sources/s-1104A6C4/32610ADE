@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1572391173190.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2946132076",
+    "id" : "32610ADE",
+    "lastKnownWriteTime" : 1572391192,
+    "last_content_update" : 1572391192955,
+    "path" : "~/Documents/University/StatisticalMethods1/example.Rmd",
+    "project_path" : "example.Rmd",
+    "properties" : {
+        "cursorPosition" : "11,23",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
