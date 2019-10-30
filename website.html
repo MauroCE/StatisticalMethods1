@@ -1716,6 +1716,19 @@ p(y \mid \boldsymbol{\mathbf{x}}, D) \propto p(\boldsymbol{\mathbf{x}}\mid y, D)
 p(\boldsymbol{\mathbf{x}}_a) = \int p(\boldsymbol{\mathbf{x}}_a, \boldsymbol{\mathbf{x}}_b) d\boldsymbol{\mathbf{x}}_b = N(\boldsymbol{\mathbf{\mu}}_a, \Sigma_{aa})
 \]</span></p>
 </div>
+<div id="gaussian-linear-model" class="section level3">
+<h3>Gaussian Linear Model</h3>
+<p>Suppose we have a</p>
+<ul>
+<li><strong>Prior</strong>: <span class="math inline">\(p(\boldsymbol{\mathbf{x}}) =N_{\boldsymbol{\mathbf{x}}}(\boldsymbol{\mathbf{\mu}}, \Lambda^{-1})\)</span></li>
+<li><strong>Likelihood</strong>: <span class="math inline">\(p(\boldsymbol{\mathbf{y}}\mid \boldsymbol{\mathbf{x}}) = N_{\boldsymbol{\mathbf{y}}}(A\boldsymbol{\mathbf{x}}+ \boldsymbol{\mathbf{b}}, L^{-1})\)</span></li>
+</ul>
+<p>Then we can find:</p>
+<ul>
+<li><strong>Marginal</strong>: <span class="math inline">\(p(\boldsymbol{\mathbf{y}}) = N_{\boldsymbol{\mathbf{y}}}(A\boldsymbol{\mathbf{\mu}}+ \boldsymbol{\mathbf{b}}, L^{-1} + A\Lambda^{-1}A^\top)\)</span></li>
+<li><strong>Posterior</strong>: <span class="math inline">\(p(\boldsymbol{\mathbf{x}}\mid \boldsymbol{\mathbf{y}}) = N_{\boldsymbol{\mathbf{x}}}(\Sigma[A^\top L(\boldsymbol{\mathbf{y}}- \boldsymbol{\mathbf{b}}) + \Lambda \boldsymbol{\mathbf{y}}], \Sigma)\)</span> where <span class="math inline">\(\Sigma=(\Lambda + A^\top L A)^{-1}\)</span></li>
+</ul>
+</div>
 <div id="maximum-likelihood-estimation-of-multivariate-gaussian" class="section level3">
 <h3>Maximum Likelihood Estimation of Multivariate Gaussian</h3>
 <p>Suppose we have <span class="math inline">\(N\)</span> IID multivariate Gaussian observations <span class="math inline">\(\left\{\boldsymbol{\mathbf{x}}_1, \ldots, \boldsymbol{\mathbf{x}}_N\right\}\)</span>, where <span class="math inline">\(\boldsymbol{\mathbf{x}}_i\sim N(\boldsymbol{\mathbf{\mu}}, \Sigma)\)</span>. Then <span class="math display">\[

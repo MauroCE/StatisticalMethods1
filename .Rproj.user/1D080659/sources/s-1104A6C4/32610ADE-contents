@@ -354,6 +354,18 @@ $$
 p(\vx_a) = \int p(\vx_a, \vx_b) d\vx_b = N(\vmu_a, \Sigma_{aa})
 $$
 
+### Gaussian Linear Model
+Suppose we have a 
+
+* **Prior**: $p(\vx)  =N_{\vx}(\vmu, \Lambda^{-1})$ 
+* **Likelihood**: $p(\vy\mid \vx) = N_{\vy}(A\vx + \vb, L^{-1})$
+
+Then we can find:
+
+* **Marginal**: $p(\vy) = N_{\vy}(A\vmu + \vb, L^{-1} + A\Lambda^{-1}A^\top)$
+* **Posterior**: $p(\vx\mid \vy) = N_{\vx}(\Sigma[A^\top L(\vy - \vb) + \Lambda \vy], \Sigma)$ where $\Sigma=(\Lambda + A^\top L A)^{-1}$
+
+
 ### Maximum Likelihood Estimation of Multivariate Gaussian
 Suppose we have $N$ IID multivariate Gaussian observations $\left\{\vx_1, \ldots, \vx_N\right\}$, where $\vx_i\sim N(\vmu, \Sigma)$. Then
 $$
