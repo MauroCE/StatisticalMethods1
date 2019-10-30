@@ -298,49 +298,60 @@ $$\yhat \approx
 Basically if we use a squared loss, our prediction $\yhat$ will be the same as the one found by using the fully-Bayesian approach or the MAP approach.
 
 ## Probability Review: Gaussian Identities
-### Gaussian Distribution and Central Limit Theorem
+### Multivariate Gaussian Definition
 We say that a random variable $X\sim N_x(\mu, \sigma^2)$ has a **univariate** Gaussian distribution if 
-$$p(x) = N_x\left(\mu, \sigma^2\right) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(- \frac{(x - \mu)^2}{2\sigma^2}\right) \qquad x\in \Rbb$$
-
-Then the expected value and the variance are given by 
-$$\Ebb[X] = \mu \qquad \Var[X] = \sigma^2$$
-Suppose we now have $X_1, X_2, \ldots, X_n$ are **IID** random variables with equal mean and equal variance given by 
-$$\Ebb[X_i] = \mu \qquad \Var[X_i] = \sigma^2$$
-
-Then by the **Central Limit Theorem** we have
-$$
-\frac{1}{\sqrt{n}}\sum_i (X_i - \mu) \xrightarrow{d} N(0, \sigma^2)
-$$
-This theorem motivates the definition of the **multivariate** Gaussian distribution for a $d-$dimensional random vector $X$ 
+We say that a random vector $\vX = (X_1, \ldots, X_d)^\top$ has a **multivariate** Gaussian distribution if
 $$p(\vx) = N_{\vx}(\vmu, \Sigma) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}(\vx-\vmu)^\top \Sigma^{-1} (\vx - \vmu)\right)$$
-where $\vmu\in\Rbb^{d}$ and $\Sigma\in \Rbb^{d\times d}$ and the variance-covariance matrix needs to be **positive definite** $\Sigma \succ 0$.
+where $\vmu\in\Rbb^{d}$ and $\Sigma\in \Rbb^{d\times d}$ and the variance-covariance matrix needs to be **positive definite** $\Sigma \succ 0$. Issues with MVN:
+
+* Number of parameters grows **quadratically** with dimensionality $d$.
+* **Unimodal**
 
 ### Geometry of the Multivariate Normal Distribution
-We define the **Mahalanobis distance** as 
-$$\triangle^2 = (\vx - \vmu)^\top \Sigma^{-1}(\vx-\vmu)$$
-this is a _rotated_ and _shifted_ Euclidean geometry. Using the **eigendecomposition** on $\Sigma^{-1}=UD^{-1}U^\top$ and using the change of variable $\vy = U^\top (\vx - \vmu)\in\Rbb^{d}$ the MVN can be rewritten (see <button onclick="myFunction()">Proof</button>) as:
+**Eigendecomposing** $\Sigma^{-1}$ and using the change of variable $\vy = U^\top (\vx - \vmu)$, corresponding to centering the observations and rotating using the eigenvector matrix, we find that _every MVN under a linear coordinate transform is a product of $d$ univariate normals_:
+$$p(\vy) = \prod_{i=1}^d N_{y_i}(0, \lambda_i) \qquad \text{where } \lambda_i \text{ eigenvectors of } \Sigma^{-1}$$
 
-<div id="myDIV" style='display: none'>
-   We can consider $\Sigma^{-1}$ to be _symmetric_ without loss of generality. Notice that $\triangle^2$ is just a number and therefore it is equal to its transpose, that is
-$$\triangle^2 = (\vx - \vmu)^\top \Sigma^{-1}(\vx-\vmu) = (\vx - \vmu)^\top (\Sigma^{-1})^\top(\vx - \vmu) = (\triangle^2)^\top$$
+### Conditional Gaussian Distributions
+If two sets of variables are jointly Gaussian, then the conditional distribution of one set conditioned on the other is again Gaussian. That is if we partition
+$$
+\vx = 
+\begin{pmatrix}
+\vx_a \\
+\vx_b
+\end{pmatrix}
+\qquad \vmu =
+\begin{pmatrix}
+\vmu_a \\
+\vmu_b
+\end{pmatrix}
+\qquad 
+\Sigma = \begin{pmatrix}
+\Sigma_{aa} & \Sigma_{ab}\\
+\Sigma_{bb} & \Sigma_{bb}
+\end{pmatrix}
+\qquad
+\Lambda = \Sigma^{-1} = \begin{pmatrix}
+\Lambda_{aa} & \Lambda_{ab} \\
+\Lambda_{ba} & \Lambda_{bb}
+\end{pmatrix}
+\qquad \text{where } \Lambda \text{ is the $\textbf{precision}$ matrix}
+$$
+Then we have the mean and covariance matrix of $p(\vx_a\mid\vx_b)$ are given by
+$$
+\begin{align}
+\vmu_{a\mid b} &= \vmu_a + \Sigma_{ab}\Sigma_{bb}^{-1}(\vx_b - \vmu_b) = \vmu_a - \Lambda_{aa}^{-1}\Lambda_{ab}(\vx_b - \vmu_b) \qquad \textbf{linear} \text{ function of } \vx_b\\
+\Sigma_{a\mid b} &= \Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba} = \Lambda_{aa}^{-1} \qquad \textbf{independent} \text{ of } \vx_b
+\end{align}
+$$
+The general form $p(\vy\mid \vx)$ with mean being a linear function of $\vx$ and covariance independent of $\vx$ is called a **linear Gaussian model**.
 
-This means that we can write $\triangle^2$ as
-$$\triangle^2 = \frac{\triangle^2 + (\triangle^2)^\top}{2} = (\vx - \vmu)^\top \left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)(\vx - \vmu) = (\vx - \vmu)^\top\Sigma^{-1}(\vx - \vmu)$$
+### Marginal Distribution
+The marginal of a MVN is again a Gaussian:
+$$
+p(\vx_a) = \int p(\vx_a, \vx_b) d\vx_b = N(\vmu_a, \Sigma_{aa})
+$$
 
-And it is clear that we can consider $\Sigma^{-1}$ to be symmetric because we can replace it with $\left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)$ and this is clearly symmetric:
-$$\left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right) = \left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)^\top$$
-Therefore it can be decomposed as $\Sigma^{-1} = UDU^\top$ where $U\in\Rbb^{d\times d}$ is an _orthogonal matrix_ whose columns are the **eigenvectors** of $\Sigma^{-1}$, and $D\in\Rbb^{d\times d}$ is a **diagonal** matrix whose elements are the respective **eigenvalues**. Define $\vy = U^\top (\vx- \vmu) = \sum_i y_i^2 D_i$ and we want to write the density for the random variable $Y$. Notice that since $U$ is orthogonal we have that $U^\top = U^{-1}$ which means that $\vx = U\vy + \vmu$. The change of variables to find $p(\vy)$ then is found using the formula
-$$f_Y(\vy) = f_X(\vx)(U\vy + \vmu)\left|J\right|$$
-where $|J|$ is the determinant of the Jacobian with elements 
-$$J_{ij}:=\frac{\partial x_i}{\partial y_j} = \frac{\partial}{\partial y_j}\left(\sum_{k=1}^n U_{ik}y_k \, +\, \mu_i\right)$$
-$$p(\vx) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}} \exp\left(-\frac{1}{2} \sum_{i=1}^n y_i^2 D_i\right) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\prod_{i=!}^n \exp\left(-\frac{1}{2}y_i^2D_i\right)$$
-where $D_i$ are the diagonal elements of $D$, i.e. the eigenvalues of $\Sigma^{-1}$. This leads to
-</div>
-$$p(\vx) = \prod_{i=1}^n $$
-
-
-
-
+### Maximum Likelihood Estimation of Multivariate Gaussian
 
 
 

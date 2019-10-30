@@ -1666,23 +1666,57 @@ p(y \mid \boldsymbol{\mathbf{x}}, D) \propto p(\boldsymbol{\mathbf{x}}\mid y, D)
 </div>
 <div id="probability-review-gaussian-identities" class="section level2">
 <h2>Probability Review: Gaussian Identities</h2>
-<div id="gaussian-distribution-and-central-limit-theorem" class="section level3">
-<h3>Gaussian Distribution and Central Limit Theorem</h3>
-<p>We say that a random variable <span class="math inline">\(X\sim N_x(\mu, \sigma^2)\)</span> has a <strong>univariate</strong> Gaussian distribution if <span class="math display">\[p(x) = N_x\left(\mu, \sigma^2\right) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(- \frac{(x - \mu)^2}{2\sigma^2}\right) \qquad x\in \mathbb{R}\]</span></p>
-<p>Then the expected value and the variance are given by <span class="math display">\[\mathbb{E}[X] = \mu \qquad \text{Var}[X] = \sigma^2\]</span> Suppose we now have <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> are <strong>IID</strong> random variables with equal mean and equal variance given by <span class="math display">\[\mathbb{E}[X_i] = \mu \qquad \text{Var}[X_i] = \sigma^2\]</span></p>
-<p>Then by the <strong>Central Limit Theorem</strong> we have <span class="math display">\[
-\frac{1}{\sqrt{n}}\sum_i (X_i - \mu) \xrightarrow{d} N(0, \sigma^2)
-\]</span> This theorem motivates the definition of the <strong>multivariate</strong> Gaussian distribution for a <span class="math inline">\(d-\)</span>dimensional random vector <span class="math inline">\(X\)</span> <span class="math display">\[p(\boldsymbol{\mathbf{x}}) = N_{\boldsymbol{\mathbf{x}}}(\boldsymbol{\mathbf{\mu}}, \Sigma) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}(\boldsymbol{\mathbf{x}}-\boldsymbol{\mathbf{\mu}})^\top \Sigma^{-1} (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})\right)\]</span> where <span class="math inline">\(\boldsymbol{\mathbf{\mu}}\in\mathbb{R}^{d}\)</span> and <span class="math inline">\(\Sigma\in \mathbb{R}^{d\times d}\)</span> and the variance-covariance matrix needs to be <strong>positive definite</strong> <span class="math inline">\(\Sigma \succ 0\)</span>.</p>
+<div id="multivariate-gaussian-definition" class="section level3">
+<h3>Multivariate Gaussian Definition</h3>
+<p>We say that a random variable <span class="math inline">\(X\sim N_x(\mu, \sigma^2)\)</span> has a <strong>univariate</strong> Gaussian distribution if We say that a random vector <span class="math inline">\(\boldsymbol{\mathbf{X}}= (X_1, \ldots, X_d)^\top\)</span> has a <strong>multivariate</strong> Gaussian distribution if <span class="math display">\[p(\boldsymbol{\mathbf{x}}) = N_{\boldsymbol{\mathbf{x}}}(\boldsymbol{\mathbf{\mu}}, \Sigma) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}(\boldsymbol{\mathbf{x}}-\boldsymbol{\mathbf{\mu}})^\top \Sigma^{-1} (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})\right)\]</span> where <span class="math inline">\(\boldsymbol{\mathbf{\mu}}\in\mathbb{R}^{d}\)</span> and <span class="math inline">\(\Sigma\in \mathbb{R}^{d\times d}\)</span> and the variance-covariance matrix needs to be <strong>positive definite</strong> <span class="math inline">\(\Sigma \succ 0\)</span>. Issues with MVN:</p>
+<ul>
+<li>Number of parameters grows <strong>quadratically</strong> with dimensionality <span class="math inline">\(d\)</span>.</li>
+<li><strong>Unimodal</strong></li>
+</ul>
 </div>
 <div id="geometry-of-the-multivariate-normal-distribution" class="section level3">
 <h3>Geometry of the Multivariate Normal Distribution</h3>
-<p>We define the <strong>Mahalanobis distance</strong> as <span class="math display">\[\triangle^2 = (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})^\top \Sigma^{-1}(\boldsymbol{\mathbf{x}}-\boldsymbol{\mathbf{\mu}})\]</span> this is a <em>rotated</em> and <em>shifted</em> Euclidean geometry. Using the <strong>eigendecomposition</strong> on <span class="math inline">\(\Sigma^{-1}=UD^{-1}U^\top\)</span> and using the change of variable <span class="math inline">\(\boldsymbol{\mathbf{y}}= U^\top (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})\in\mathbb{R}^{d}\)</span> the MVN can be rewritten (see <button onclick="myFunction()">Proof</button>) as:</p>
-<div id="myDIV" style="display: none">
-<p>We can consider <span class="math inline">\(\Sigma^{-1}\)</span> to be <em>symmetric</em> without loss of generality. Notice that <span class="math inline">\(\triangle^2\)</span> is just a number and therefore it is equal to its transpose, that is <span class="math display">\[\triangle^2 = (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})^\top \Sigma^{-1}(\boldsymbol{\mathbf{x}}-\boldsymbol{\mathbf{\mu}}) = (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})^\top (\Sigma^{-1})^\top(\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}}) = (\triangle^2)^\top\]</span></p>
-<p>This means that we can write <span class="math inline">\(\triangle^2\)</span> as <span class="math display">\[\triangle^2 = \frac{\triangle^2 + (\triangle^2)^\top}{2} = (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})^\top \left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)(\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}}) = (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})^\top\Sigma^{-1}(\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})\]</span></p>
-<p>And it is clear that we can consider <span class="math inline">\(\Sigma^{-1}\)</span> to be symmetric because we can replace it with <span class="math inline">\(\left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)\)</span> and this is clearly symmetric: <span class="math display">\[\left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right) = \left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)^\top\]</span> Therefore it can be decomposed as <span class="math inline">\(\Sigma^{-1} = UDU^\top\)</span> where <span class="math inline">\(U\in\mathbb{R}^{d\times d}\)</span> is an <em>orthogonal matrix</em> whose columns are the <strong>eigenvectors</strong> of <span class="math inline">\(\Sigma^{-1}\)</span>, and <span class="math inline">\(D\in\mathbb{R}^{d\times d}\)</span> is a <strong>diagonal</strong> matrix whose elements are the respective <strong>eigenvalues</strong>. Define <span class="math inline">\(\boldsymbol{\mathbf{y}}= U^\top (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}}) = \sum_i y_i^2 D_i\)</span> and we want to write the density for the random variable <span class="math inline">\(Y\)</span>. Notice that since <span class="math inline">\(U\)</span> is orthogonal we have that <span class="math inline">\(U^\top = U^{-1}\)</span> which means that <span class="math inline">\(\boldsymbol{\mathbf{x}}= U\boldsymbol{\mathbf{y}}+ \boldsymbol{\mathbf{\mu}}\)</span>. The change of variables to find <span class="math inline">\(p(\boldsymbol{\mathbf{y}})\)</span> then is found using the formula <span class="math display">\[f_Y(\boldsymbol{\mathbf{y}}) = f_X(\boldsymbol{\mathbf{x}})(U\boldsymbol{\mathbf{y}}+ \boldsymbol{\mathbf{\mu}})\left|J\right|\]</span> where <span class="math inline">\(|J|\)</span> is the determinant of the Jacobian with elements <span class="math display">\[J_{ij}:=\frac{\partial x_i}{\partial y_j} = \frac{\partial}{\partial y_j}\left(\sum_{k=1}^n U_{ik}y_k \, +\, \mu_i\right)\]</span> <span class="math display">\[p(\boldsymbol{\mathbf{x}}) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}} \exp\left(-\frac{1}{2} \sum_{i=1}^n y_i^2 D_i\right) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\prod_{i=!}^n \exp\left(-\frac{1}{2}y_i^2D_i\right)\]</span> where <span class="math inline">\(D_i\)</span> are the diagonal elements of <span class="math inline">\(D\)</span>, i.e. the eigenvalues of <span class="math inline">\(\Sigma^{-1}\)</span>. This leads to</p>
+<p><strong>Eigendecomposing</strong> <span class="math inline">\(\Sigma^{-1}\)</span> and using the change of variable <span class="math inline">\(\boldsymbol{\mathbf{y}}= U^\top (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})\)</span>, corresponding to centering the observations and rotating using the eigenvector matrix, we find that <em>every MVN under a linear coordinate transform is a product of <span class="math inline">\(d\)</span> univariate normals</em>: <span class="math display">\[p(\boldsymbol{\mathbf{y}}) = \prod_{i=1}^d N_{y_i}(0, \lambda_i) \qquad \text{where } \lambda_i \text{ eigenvectors of } \Sigma^{-1}\]</span></p>
 </div>
-<p><span class="math display">\[p(\boldsymbol{\mathbf{x}}) = \prod_{i=1}^n \]</span></p>
+<div id="conditional-gaussian-distributions" class="section level3">
+<h3>Conditional Gaussian Distributions</h3>
+<p>If two sets of variables are jointly Gaussian, then the conditional distribution of one set conditioned on the other is again Gaussian. That is if we partition <span class="math display">\[
+\boldsymbol{\mathbf{x}}= 
+\begin{pmatrix}
+\boldsymbol{\mathbf{x}}_a \\
+\boldsymbol{\mathbf{x}}_b
+\end{pmatrix}
+\qquad \boldsymbol{\mathbf{\mu}}=
+\begin{pmatrix}
+\boldsymbol{\mathbf{\mu}}_a \\
+\boldsymbol{\mathbf{\mu}}_b
+\end{pmatrix}
+\qquad 
+\Sigma = \begin{pmatrix}
+\Sigma_{aa} &amp; \Sigma_{ab}\\
+\Sigma_{bb} &amp; \Sigma_{bb}
+\end{pmatrix}
+\qquad
+\Lambda = \Sigma^{-1} = \begin{pmatrix}
+\Lambda_{aa} &amp; \Lambda_{ab} \\
+\Lambda_{ba} &amp; \Lambda_{bb}
+\end{pmatrix}
+\qquad \text{where } \Lambda \text{ is the $\textbf{precision}$ matrix}
+\]</span> Then we have the mean and covariance matrix of <span class="math inline">\(p(\boldsymbol{\mathbf{x}}_a\mid\boldsymbol{\mathbf{x}}_b)\)</span> are given by <span class="math display">\[
+\begin{align}
+\boldsymbol{\mathbf{\mu}}_{a\mid b} &amp;= \boldsymbol{\mathbf{\mu}}_a + \Sigma_{ab}\Sigma_{bb}^{-1}(\boldsymbol{\mathbf{x}}_b - \boldsymbol{\mathbf{\mu}}_b) = \boldsymbol{\mathbf{\mu}}_a - \Lambda_{aa}^{-1}\Lambda_{ab}(\boldsymbol{\mathbf{x}}_b - \boldsymbol{\mathbf{\mu}}_b) \qquad \textbf{linear} \text{ function of } \boldsymbol{\mathbf{x}}_b\\
+\Sigma_{a\mid b} &amp;= \Sigma_{aa} - \Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba} = \Lambda_{aa}^{-1} \qquad \textbf{independent} \text{ of } \boldsymbol{\mathbf{x}}_b
+\end{align}
+\]</span> The general form <span class="math inline">\(p(\boldsymbol{\mathbf{y}}\mid \boldsymbol{\mathbf{x}})\)</span> with mean being a linear function of <span class="math inline">\(\boldsymbol{\mathbf{x}}\)</span> and covariance independent of <span class="math inline">\(\boldsymbol{\mathbf{x}}\)</span> is called a <strong>linear Gaussian model</strong>.</p>
+</div>
+<div id="marginal-distribution" class="section level3">
+<h3>Marginal Distribution</h3>
+<p>The marginal of a MVN is again a Gaussian: <span class="math display">\[
+p(\boldsymbol{\mathbf{x}}_a) = \int p(\boldsymbol{\mathbf{x}}_a, \boldsymbol{\mathbf{x}}_b) d\boldsymbol{\mathbf{x}}_b = N(\boldsymbol{\mathbf{\mu}}_a, \Sigma_{aa})
+\]</span></p>
+</div>
+<div id="maximum-likelihood-estimation-of-multivariate-gaussian" class="section level3">
+<h3>Maximum Likelihood Estimation of Multivariate Gaussian</h3>
 </div>
 </div>
 
