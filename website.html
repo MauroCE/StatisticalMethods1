@@ -1656,6 +1656,21 @@ p(y \mid \boldsymbol{\mathbf{x}}, D) \propto p(\boldsymbol{\mathbf{x}}\mid y, D)
 \end{cases}\]</span></p>
 </div>
 </div>
+<div id="probability-review-gaussian-identities" class="section level2">
+<h2>Probability Review: Gaussian Identities</h2>
+<div id="gaussian-distribution-and-central-limit-theorem" class="section level3">
+<h3>Gaussian Distribution and Central Limit Theorem</h3>
+<p>We say that a random variable <span class="math inline">\(X\sim N_x(\mu, \sigma^2)\)</span> has a <strong>univariate</strong> Gaussian distribution if <span class="math display">\[p(x) = N_x\left(\mu, \sigma^2\right) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(- \frac{(x - \mu)^2}{2\sigma^2}\right) \qquad x\in \mathbb{R}\]</span></p>
+<p>Then the expected value and the variance are given by <span class="math display">\[\mathbb{E}[X] = \mu \qquad \text{Var}[X] = \sigma^2\]</span> Suppose we now have <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> are <strong>IID</strong> random variables with equal mean and equal variance given by <span class="math display">\[\mathbb{E}[X_i] = \mu \qquad \text{Var}[X_i] = \sigma^2\]</span></p>
+<p>Then by the <strong>Central Limit Theorem</strong> we have <span class="math display">\[
+\frac{1}{\sqrt{n}}\sum_i (X_i - \mu) \xrightarrow{d} N(0, \sigma^2)
+\]</span> This theorem motivates the definition of the <strong>multivariate</strong> Gaussian distribution for a <span class="math inline">\(d-\)</span>dimensional random vector <span class="math inline">\(X\)</span> <span class="math display">\[p(\boldsymbol{\mathbf{x}}) = N_{\boldsymbol{\mathbf{x}}}(\boldsymbol{\mathbf{\mu}}, \Sigma) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}(\boldsymbol{\mathbf{x}}-\boldsymbol{\mathbf{\mu}})^\top \Sigma^{-1} (\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})\right)\]</span> where <span class="math inline">\(\boldsymbol{\mathbf{\mu}}\in\mathbb{R}^{d}\)</span> and <span class="math inline">\(\Sigma\in \mathbb{R}^{d\times d}\)</span> and the variance-covariance matrix needs to be <strong>positive definite</strong> <span class="math inline">\(\Sigma \succ 0\)</span>.</p>
+</div>
+<div id="geometry-of-the-multivariate-normal-distribution" class="section level3">
+<h3>Geometry of the Multivariate Normal Distribution</h3>
+<p>We define the <strong>Mahalanobis distance</strong> as <span class="math display">\[(\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})^\top \Sigma^{-1}(\boldsymbol{\mathbf{x}}-\boldsymbol{\mathbf{\mu}})\]</span> this is a <em>rotated</em> and <em>shifted</em> Euclidean geometry.</p>
+</div>
+</div>
 
 
 

@@ -65,6 +65,7 @@ $\\newcommand{\\var}{\\mathrm{Var}}$
 \newcommand{\linearpredictor}{\vx_i^T\vbeta}
 \newcommand{\vmu}{\vect{\mu}}
 \newcommand{\vnu}{\vect{\nu}}
+\newcommand{\Var}{\text{Var}}
 \newcommand{\veta}{\vect{\eta}}
 \newcommand{\vbeta}{\vect{\beta}}
 \newcommand{\vepsilon}{\vect{\epsilon}}
@@ -269,13 +270,28 @@ $$\yhat \approx
 \text{Predictive median of } p(y \mid \vx, D) && \text{if } L=|y-y_0|
 \end{cases}$$
 
+## Probability Review: Gaussian Identities
+### Gaussian Distribution and Central Limit Theorem
+We say that a random variable $X\sim N_x(\mu, \sigma^2)$ has a **univariate** Gaussian distribution if 
+$$p(x) = N_x\left(\mu, \sigma^2\right) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(- \frac{(x - \mu)^2}{2\sigma^2}\right) \qquad x\in \Rbb$$
 
+Then the expected value and the variance are given by 
+$$\Ebb[X] = \mu \qquad \Var[X] = \sigma^2$$
+Suppose we now have $X_1, X_2, \ldots, X_n$ are **IID** random variables with equal mean and equal variance given by 
+$$\Ebb[X_i] = \mu \qquad \Var[X_i] = \sigma^2$$
 
+Then by the **Central Limit Theorem** we have
+$$
+\frac{1}{\sqrt{n}}\sum_i (X_i - \mu) \xrightarrow{d} N(0, \sigma^2)
+$$
+This theorem motivates the definition of the **multivariate** Gaussian distribution for a $d-$dimensional random vector $X$ 
+$$p(\vx) = N_{\vx}(\vmu, \Sigma) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}(\vx-\vmu)^\top \Sigma^{-1} (\vx - \vmu)\right)$$
+where $\vmu\in\Rbb^{d}$ and $\Sigma\in \Rbb^{d\times d}$ and the variance-covariance matrix needs to be **positive definite** $\Sigma \succ 0$.
 
-
-
-
-
+### Geometry of the Multivariate Normal Distribution
+We define the **Mahalanobis distance** as 
+$$(\vx - \vmu)^\top \Sigma^{-1}(\vx-\vmu)$$
+this is a _rotated_ and _shifted_ Euclidean geometry.
 
 
 
