@@ -6,7 +6,6 @@ output:
     toc_float: true
     toc_depth: 4
     css: style.css
-fontsize: 15pt
 ---
 
 <style>
