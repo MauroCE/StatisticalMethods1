@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "21389727",
+    "hash" : "0",
     "id" : "32610ADE",
-    "lastKnownWriteTime" : 1572393507,
-    "last_content_update" : 1572393507095,
+    "lastKnownWriteTime" : 1572428229,
+    "last_content_update" : 1572428229090,
     "path" : "~/Documents/University/StatisticalMethods1/website.Rmd",
     "project_path" : "website.Rmd",
     "properties" : {
-        "cursorPosition" : "7,12",
+        "cursorPosition" : "25,21",
         "scrollLine" : "0",
         "tempName" : "Untitled1"
     },
