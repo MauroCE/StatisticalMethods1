@@ -37,13 +37,6 @@ $\\newcommand{\\var}{\\mathrm{Var}}$
 \usepackage{color}
 \usepackage{bm}
 \usepackage{algorithm2e}
-
-
-\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
-\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}} % inner command, used by \rchi
-\newenvironment{rcases}
-  {\left.\begin{aligned}}
-  {\end{aligned}\right\rbrace}
 \newcommand{\def}{\overset{\text{def}}{:=}}
 \newcommand{\lop}{\mathcal{L}}
 \newcommand{\vect}[1]{\boldsymbol{\mathbf{#1}}}
@@ -86,7 +79,7 @@ $\\newcommand{\\var}{\\mathrm{Var}}$
 \newcommand{\dataset}{\mathcal{D}}
 \newcommand{\vS}{\vect{S}}
 \newcommand{\sample}{\vz^{(l)}}
-\newcommand{\MYhref}[3][blue]{\href{#2}{\color{#1}{#3}}}%
+\newcommand{\MYhref}[3][blue]{\href{#2}{\color{#1}{#3}}}
 \newcommand{\sol}[1]{\vx^{(#1)}}
 \newcommand{\qtext}[1]{\quad\quad \text{#1}}
 \newcommand{\vtheta}{\vect{\theta}}
@@ -134,7 +127,6 @@ $\\newcommand{\\var}{\\mathrm{Var}}$
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
 
 ## Course Description
 Repository containing summary of notes for the [Statistical Methods 1](https://www.bris.ac.uk/unit-programme-catalogue/UnitDetails.jsa;jsessionid=7912981ABC434B62AA99EB75652E7E8A?ayrCode=19%2F20&unitCode=MATHM0041) course in the [Computational Statistics and Data Science (COMPASS)](http://www.bris.ac.uk/maths/postgraduate/compass/) Center for Doctoral Training (CDT) PhD at the [University of Bristol](https://www.bristol.ac.uk).
@@ -216,6 +208,103 @@ There are $2$ main non-bayesian inference methods that we look at:
     Assuming $y_i$ are **IID** and **normally distributed**, Maximum likelihood and Least Squares lead to the same solution $\vw_{\text{LS}} = \vw_{\text{ML}}$. The advantage of Maximum Likelihood over Least Squares is that by finding $\sigma^2_{\text{ML}}$ we obtain a **measure of uncertainty** on our prediction.
 
 ### Issues with Non-Bayesian Inference Methods
+
+* They provide **point estimates** for our predictions, but we want a **predictive distribution** instead.
+* Using the feature transform $\phi$ in the model leads both inference methods to possible **overfitting**, i.e. learning the _noise_ rather than the _structure_ in the data, when the **complexity** of the model, governed by $b$, increases. Cross Validation can be used to select the output dimensionality $b$ of $\phi$ to combat overfitting, but dataset is often not IID. A better choice is **regularized least squares**:
+  $$
+  \vw_{\text{LS-R}}:= \argmin_{\vw} \sum_{i\in D_0} \left(y_i - f(\phi(\vx_i), \vw)\right)^2 + \lambda || \vw ||_2^2 = \left(\phi(X)\phi(X)^\top + \lambda I \right)^{-1} \phi(X)\vy^\top 
+  $$
+  Regularization combats overfitting because this is often due to large increase in parameters magnitude, and regularization puts a penalty on it. To choose $\lambda$ we can use **cross-validation** or a **probabilistic perspective**, as we'll see later. Notice that above the penalty is the $L^2$ norm but can be any $p-$norm.
+* They incur in the **curse of dimensionality** because as we increase complexity $b$, we include more features, whose number can grow exponentially even just in the case of $\phi$ being a polynomial transform. This requires a dataset size that is **exponential** in $b$.
+
+### Semi and Fully Bayesian Inference Methods
+Here we assume $y_i$ are IID and normally distributed. Moreover, we assign a _normal prior_ to the parameters.
+
+* **Maximum-A-Posteriori** (MAP): Finds parameter $\vw_{\text{MAP}}$ that maximizes the **posterior parameter distribution** given our data $D$:
+  $$
+  \vw_{\text{MAP}} := \argmax_{\vw} p(\vw\mid D) = \argmax_{\vw} \prod_{i\in D} N_{y_i}\left(f(\phi(\vx_i), \vw), \sigma^2 \right)N_{\vw}(\vect{0}, \sigma^2_{\vw}I) = \vw_{\text{LS-R}}\left(\frac{\sigma^2}{\sigma^2_{\vw}}\right)
+  $$
+* **Fully Bayesian**: Finds a **predictive distribution** for $\yhat$ given the new $\vxhat$
+  $$
+  p(\yhat\mid \vxhat, D) = \int p(\yhat\mid \vxhat, D)p(\vw\mid D)d\vw = N_{\yhat}\left(f\left(\phi(\vxhat), \vw_{\text{LS-R}}\left(\frac{\sigma^2}{\sigma^2_{\vw}}\right)\right), \sigma^2 + \phi(\vxhat)^\top \sigma^2\left(\phi(X)\phi(X)^\top + \frac{\sigma^2}{\sigma^2_\vw} I \right)^{-1}\phi(\vxhat)\right)
+  $$
+  which is a normal distribution whose mean is the prediction given by regularized least squares. 
+  
+## Classification
+### Problem Statement and Optimal Bayes Classifier
+Now we consider $y\in \left\{+1, -1\right\}$. We are looking for a **decision function** $f(\vx)$ whose level set $f(\vx) = 0$, called **decision boundary**, separates feature space into two regions:
+
+* $R_{+}$ where $f(\vx)\geq 0$ when $\vx\in R_{+}$
+* $R_{-}$ where $f(\vx)\leq 0$ when $\vx\in R_{-}$
+
+The **optimal Bayes classifier** 
+$$f(\vw) = p(\vw, y=+1) - p(\vx, y= -1)$$ minimizes the probability of making a mistake given the decision function $f$, that is it minimizes
+$$p(\text{mistake} \mid f) = \int_{R_{+}} p(\vx, y=-1)d\vx + \int_{R_{-}} p(\vx, y=+1)d\vx$$
+However, this classifier is **unpractical** because in reality
+
+* We don't have access to $p(\vx, y)$
+* Different mistakes bear different losses.
+
+### Expected Loss Minimization 
+Therefore, we introduce a **loss function** $L(y, y_0)$ which is described by a **loss matrix** whose entries give the loss of predicting $y_0$ when the actual value is $y$. Our goal then becomes to **minimize expected loss**
+$$\yhat = \argmin_{y_0} \Ebb_{p(y\mid \vx, D)}\left[y \mid \vx\right]$$
+where $p(y \mid \vx, D)$ can be found with either the Fully Bayesian approach, or we can find $\vw_{\text{ML}}$ or $\vw_{\text{MAP}}$ first, and then plug them in to obtain the distribution. 
+
+Notice that in general there are two strategies to find $p(y \mid \vx, D)$:
+
+* **Discriminative Approach**: Infer $p(y \mid \vx, D)$ directly using $D$. This method is best used when our only goal is **prediction**.
+* **Generative Approach**: Infer 
+  $$
+  p(y \mid \vx, D) \propto p(\vx \mid y, D) p(y)
+  $$
+  using Bayes rule, where $p(y)$ is simply the proportion of $+$ and $-$ in $D$. This gives us a way of _generating_ new data points, but at an extra cost because $p(\vx \mid y , D)$ can be very high-dimensional.
+  
+Once we have $p(y \mid \vx, D)$ we can start taking decisions. Sometimes, we might be uncertain about our decision. In such cases, we can reject a data point $\vx$ when both probabilities are lower than a **threshold** $\theta$ 
+$$\max\left\{ p(y = +1\mid \vx), \, p(y=-1\mid \vx)\right\} < \theta$$
+
+### Decision Making in Regression Tasks
+$$\yhat \approx 
+\begin{cases}
+\Ebb_{p(y\mid \vx, D)}\left[y \mid \vx\right] && \text{if } L=(y-y_0)^2 \\
+\text{Predictive median of } p(y \mid \vx, D) && \text{if } L=|y-y_0|
+\end{cases}$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

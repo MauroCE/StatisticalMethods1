@@ -3,6 +3,20 @@ body{
   font-size: 14pt;
 }
 /* Headers */
-h1,h2,h3,h4,h5,h6{
+/*h1,h2,h3,h4,h5,h6{
   font-size: 24pt;
+}
+*/
+
+h3{
+  color: hsla(199, 99%, 55%,1);
+}
+
+h2{
+  color: hsla(218, 45%, 48%,1);
+}
+
+
+body .main-container {
+    max-width: 1800px;
 }

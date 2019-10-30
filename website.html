@@ -1333,8 +1333,15 @@ body{
 font-size: 14pt;
 }
 
-h1,h2,h3,h4,h5,h6{
-font-size: 24pt;
+
+h3{
+color: hsla(199, 99%, 55%,1);
+}
+h2{
+color: hsla(218, 45%, 48%,1);
+}
+body .main-container {
+max-width: 1800px;
 }
 </style>
 
@@ -1524,11 +1531,6 @@ div.tocify {
 <!--- For HTML Only --->
 <p><span class="math inline">\(\DeclareMathOperator*{\argmin}{arg\,min}\)</span> <span class="math inline">\(\DeclareMathOperator*{\argmax}{arg\,max}\)</span> <span class="math inline">\(\newcommand{\var}{\mathrm{Var}}\)</span></p>
 
-
-% inner command, used by 
-
-%
-
 <div id="course-description" class="section level2">
 <h2>Course Description</h2>
 <p>Repository containing summary of notes for the <a href="https://www.bris.ac.uk/unit-programme-catalogue/UnitDetails.jsa;jsessionid=7912981ABC434B62AA99EB75652E7E8A?ayrCode=19%2F20&amp;unitCode=MATHM0041">Statistical Methods 1</a> course in the <a href="http://www.bris.ac.uk/maths/postgraduate/compass/">Computational Statistics and Data Science (COMPASS)</a> Center for Doctoral Training (CDT) PhD at the <a href="https://www.bristol.ac.uk">University of Bristol</a>.</p>
@@ -1597,6 +1599,61 @@ div.tocify {
 </div>
 <div id="issues-with-non-bayesian-inference-methods" class="section level3">
 <h3>Issues with Non-Bayesian Inference Methods</h3>
+<ul>
+<li>They provide <strong>point estimates</strong> for our predictions, but we want a <strong>predictive distribution</strong> instead.</li>
+<li>Using the feature transform <span class="math inline">\(\phi\)</span> in the model leads both inference methods to possible <strong>overfitting</strong>, i.e. learning the <em>noise</em> rather than the <em>structure</em> in the data, when the <strong>complexity</strong> of the model, governed by <span class="math inline">\(b\)</span>, increases. Cross Validation can be used to select the output dimensionality <span class="math inline">\(b\)</span> of <span class="math inline">\(\phi\)</span> to combat overfitting, but dataset is often not IID. A better choice is <strong>regularized least squares</strong>: <span class="math display">\[
+\boldsymbol{\mathbf{w}}_{\text{LS-R}}:= \argmin_{\boldsymbol{\mathbf{w}}} \sum_{i\in D_0} \left(y_i - f(\phi(\boldsymbol{\mathbf{x}}_i), \boldsymbol{\mathbf{w}})\right)^2 + \lambda || \boldsymbol{\mathbf{w}}||_2^2 = \left(\phi(X)\phi(X)^\top + \lambda I \right)^{-1} \phi(X)\boldsymbol{\mathbf{y}}^\top 
+\]</span> Regularization combats overfitting because this is often due to large increase in parameters magnitude, and regularization puts a penalty on it. To choose <span class="math inline">\(\lambda\)</span> we can use <strong>cross-validation</strong> or a <strong>probabilistic perspective</strong>, as we’ll see later. Notice that above the penalty is the <span class="math inline">\(L^2\)</span> norm but can be any <span class="math inline">\(p-\)</span>norm.</li>
+<li>They incur in the <strong>curse of dimensionality</strong> because as we increase complexity <span class="math inline">\(b\)</span>, we include more features, whose number can grow exponentially even just in the case of <span class="math inline">\(\phi\)</span> being a polynomial transform. This requires a dataset size that is <strong>exponential</strong> in <span class="math inline">\(b\)</span>.</li>
+</ul>
+</div>
+<div id="semi-and-fully-bayesian-inference-methods" class="section level3">
+<h3>Semi and Fully Bayesian Inference Methods</h3>
+<p>Here we assume <span class="math inline">\(y_i\)</span> are IID and normally distributed. Moreover, we assign a <em>normal prior</em> to the parameters.</p>
+<ul>
+<li><strong>Maximum-A-Posteriori</strong> (MAP): Finds parameter <span class="math inline">\(\boldsymbol{\mathbf{w}}_{\text{MAP}}\)</span> that maximizes the <strong>posterior parameter distribution</strong> given our data <span class="math inline">\(D\)</span>: <span class="math display">\[
+\boldsymbol{\mathbf{w}}_{\text{MAP}} := \argmax_{\boldsymbol{\mathbf{w}}} p(\boldsymbol{\mathbf{w}}\mid D) = \argmax_{\boldsymbol{\mathbf{w}}} \prod_{i\in D} N_{y_i}\left(f(\phi(\boldsymbol{\mathbf{x}}_i), \boldsymbol{\mathbf{w}}), \sigma^2 \right)N_{\boldsymbol{\mathbf{w}}}(\boldsymbol{\mathbf{0}}, \sigma^2_{\boldsymbol{\mathbf{w}}}I) = \boldsymbol{\mathbf{w}}_{\text{LS-R}}\left(\frac{\sigma^2}{\sigma^2_{\boldsymbol{\mathbf{w}}}}\right)
+\]</span></li>
+<li><strong>Fully Bayesian</strong>: Finds a <strong>predictive distribution</strong> for <span class="math inline">\(\widehat{y}\)</span> given the new <span class="math inline">\(\widehat{\boldsymbol{\mathbf{x}}}\)</span> <span class="math display">\[
+p(\widehat{y}\mid \widehat{\boldsymbol{\mathbf{x}}}, D) = \int p(\widehat{y}\mid \widehat{\boldsymbol{\mathbf{x}}}, D)p(\boldsymbol{\mathbf{w}}\mid D)d\boldsymbol{\mathbf{w}}= N_{\widehat{y}}\left(f\left(\phi(\widehat{\boldsymbol{\mathbf{x}}}), \boldsymbol{\mathbf{w}}_{\text{LS-R}}\left(\frac{\sigma^2}{\sigma^2_{\boldsymbol{\mathbf{w}}}}\right)\right), \sigma^2 + \phi(\widehat{\boldsymbol{\mathbf{x}}})^\top \sigma^2\left(\phi(X)\phi(X)^\top + \frac{\sigma^2}{\sigma^2_\boldsymbol{\mathbf{w}}} I \right)^{-1}\phi(\widehat{\boldsymbol{\mathbf{x}}})\right)
+\]</span> which is a normal distribution whose mean is the prediction given by regularized least squares.</li>
+</ul>
+</div>
+</div>
+<div id="classification" class="section level2">
+<h2>Classification</h2>
+<div id="problem-statement-and-optimal-bayes-classifier" class="section level3">
+<h3>Problem Statement and Optimal Bayes Classifier</h3>
+<p>Now we consider <span class="math inline">\(y\in \left\{+1, -1\right\}\)</span>. We are looking for a <strong>decision function</strong> <span class="math inline">\(f(\boldsymbol{\mathbf{x}})\)</span> whose level set <span class="math inline">\(f(\boldsymbol{\mathbf{x}}) = 0\)</span>, called <strong>decision boundary</strong>, separates feature space into two regions:</p>
+<ul>
+<li><span class="math inline">\(R_{+}\)</span> where <span class="math inline">\(f(\boldsymbol{\mathbf{x}})\geq 0\)</span> when <span class="math inline">\(\boldsymbol{\mathbf{x}}\in R_{+}\)</span></li>
+<li><span class="math inline">\(R_{-}\)</span> where <span class="math inline">\(f(\boldsymbol{\mathbf{x}})\leq 0\)</span> when <span class="math inline">\(\boldsymbol{\mathbf{x}}\in R_{-}\)</span></li>
+</ul>
+<p>The <strong>optimal Bayes classifier</strong> <span class="math display">\[f(\boldsymbol{\mathbf{w}}) = p(\boldsymbol{\mathbf{w}}, y=+1) - p(\boldsymbol{\mathbf{x}}, y= -1)\]</span> minimizes the probability of making a mistake given the decision function <span class="math inline">\(f\)</span>, that is it minimizes <span class="math display">\[p(\text{mistake} \mid f) = \int_{R_{+}} p(\boldsymbol{\mathbf{x}}, y=-1)d\boldsymbol{\mathbf{x}}+ \int_{R_{-}} p(\boldsymbol{\mathbf{x}}, y=+1)d\boldsymbol{\mathbf{x}}\]</span> However, this classifier is <strong>unpractical</strong> because in reality</p>
+<ul>
+<li>We don’t have access to <span class="math inline">\(p(\boldsymbol{\mathbf{x}}, y)\)</span></li>
+<li>Different mistakes bear different losses.</li>
+</ul>
+</div>
+<div id="expected-loss-minimization" class="section level3">
+<h3>Expected Loss Minimization</h3>
+<p>Therefore, we introduce a <strong>loss function</strong> <span class="math inline">\(L(y, y_0)\)</span> which is described by a <strong>loss matrix</strong> whose entries give the loss of predicting <span class="math inline">\(y_0\)</span> when the actual value is <span class="math inline">\(y\)</span>. Our goal then becomes to <strong>minimize expected loss</strong> <span class="math display">\[\widehat{y}= \argmin_{y_0} \mathbb{E}_{p(y\mid \boldsymbol{\mathbf{x}}, D)}\left[y \mid \boldsymbol{\mathbf{x}}\right]\]</span> where <span class="math inline">\(p(y \mid \boldsymbol{\mathbf{x}}, D)\)</span> can be found with either the Fully Bayesian approach, or we can find <span class="math inline">\(\boldsymbol{\mathbf{w}}_{\text{ML}}\)</span> or <span class="math inline">\(\boldsymbol{\mathbf{w}}_{\text{MAP}}\)</span> first, and then plug them in to obtain the distribution.</p>
+<p>Notice that in general there are two strategies to find <span class="math inline">\(p(y \mid \boldsymbol{\mathbf{x}}, D)\)</span>:</p>
+<ul>
+<li><strong>Discriminative Approach</strong>: Infer <span class="math inline">\(p(y \mid \boldsymbol{\mathbf{x}}, D)\)</span> directly using <span class="math inline">\(D\)</span>. This method is best used when our only goal is <strong>prediction</strong>.</li>
+<li><strong>Generative Approach</strong>: Infer <span class="math display">\[
+p(y \mid \boldsymbol{\mathbf{x}}, D) \propto p(\boldsymbol{\mathbf{x}}\mid y, D) p(y)
+\]</span> using Bayes rule, where <span class="math inline">\(p(y)\)</span> is simply the proportion of <span class="math inline">\(+\)</span> and <span class="math inline">\(-\)</span> in <span class="math inline">\(D\)</span>. This gives us a way of <em>generating</em> new data points, but at an extra cost because <span class="math inline">\(p(\boldsymbol{\mathbf{x}}\mid y , D)\)</span> can be very high-dimensional.</li>
+</ul>
+<p>Once we have <span class="math inline">\(p(y \mid \boldsymbol{\mathbf{x}}, D)\)</span> we can start taking decisions. Sometimes, we might be uncertain about our decision. In such cases, we can reject a data point <span class="math inline">\(\boldsymbol{\mathbf{x}}\)</span> when both probabilities are lower than a <strong>threshold</strong> <span class="math inline">\(\theta\)</span> <span class="math display">\[\max\left\{ p(y = +1\mid \boldsymbol{\mathbf{x}}), \, p(y=-1\mid \boldsymbol{\mathbf{x}})\right\} &lt; \theta\]</span></p>
+</div>
+<div id="decision-making-in-regression-tasks" class="section level3">
+<h3>Decision Making in Regression Tasks</h3>
+<p><span class="math display">\[\widehat{y}\approx 
+\begin{cases}
+\mathbb{E}_{p(y\mid \boldsymbol{\mathbf{x}}, D)}\left[y \mid \boldsymbol{\mathbf{x}}\right] &amp;&amp; \text{if } L=(y-y_0)^2 \\
+\text{Predictive median of } p(y \mid \boldsymbol{\mathbf{x}}, D) &amp;&amp; \text{if } L=|y-y_0|
+\end{cases}\]</span></p>
 </div>
 </div>
 
