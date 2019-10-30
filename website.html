@@ -1673,6 +1673,7 @@ p(y \mid \boldsymbol{\mathbf{x}}, D) \propto p(\boldsymbol{\mathbf{x}}\mid y, D)
 <li>Number of parameters grows <strong>quadratically</strong> with dimensionality <span class="math inline">\(d\)</span>.</li>
 <li><strong>Unimodal</strong></li>
 </ul>
+<p>A very useful formula that is used to derive the formulae below regards the <em>kernel</em> of the MVN <span class="math display">\[-\frac{1}{2}(\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}})^\top \Sigma^{-1}(\boldsymbol{\mathbf{x}}- \boldsymbol{\mathbf{\mu}}) = -\frac{1}{2}\boldsymbol{\mathbf{x}}^\top \Sigma^{-1}\boldsymbol{\mathbf{x}}+ \boldsymbol{\mathbf{x}}^\top \Sigma^{-1} \boldsymbol{\mathbf{\mu}}+ \text{const}\]</span></p>
 </div>
 <div id="geometry-of-the-multivariate-normal-distribution" class="section level3">
 <h3>Geometry of the Multivariate Normal Distribution</h3>
@@ -1717,6 +1718,12 @@ p(\boldsymbol{\mathbf{x}}_a) = \int p(\boldsymbol{\mathbf{x}}_a, \boldsymbol{\ma
 </div>
 <div id="maximum-likelihood-estimation-of-multivariate-gaussian" class="section level3">
 <h3>Maximum Likelihood Estimation of Multivariate Gaussian</h3>
+<p>Suppose we have <span class="math inline">\(N\)</span> IID multivariate Gaussian observations <span class="math inline">\(\left\{\boldsymbol{\mathbf{x}}_1, \ldots, \boldsymbol{\mathbf{x}}_N\right\}\)</span>, where <span class="math inline">\(\boldsymbol{\mathbf{x}}_i\sim N(\boldsymbol{\mathbf{\mu}}, \Sigma)\)</span>. Then <span class="math display">\[
+\begin{align}
+\boldsymbol{\mathbf{\mu}}_{\text{ML}} &amp;= \frac{1}{N} \sum_{i=1}^N \boldsymbol{\mathbf{x}}_i \\
+\Sigma_{\text{ML}} &amp;= \frac{1}{N} \sum_{i=1}^N (\boldsymbol{\mathbf{x}}_i - \boldsymbol{\mathbf{\mu}}_{\text{ML}})(\boldsymbol{\mathbf{x}}_i - \boldsymbol{\mathbf{\mu}}_{\text{ML}})^\top
+\end{align}
+\]</span> Notice that while the maximum likelihood estimate of the mean is <strong>unbiased</strong> <span class="math inline">\(\mathbb{E}[\boldsymbol{\mathbf{\mu}}_{\text{ML}}] = \boldsymbol{\mathbf{\mu}}\)</span> the maximum likelihood estimate of the covariance matrix is <strong>biased</strong> <span class="math display">\[\mathbb{E}\left[\Sigma_{\text{ML}}\right] = \frac{N - 1}{N}\Sigma\]</span></p>
 </div>
 </div>
 

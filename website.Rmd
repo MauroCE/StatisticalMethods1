@@ -307,6 +307,9 @@ where $\vmu\in\Rbb^{d}$ and $\Sigma\in \Rbb^{d\times d}$ and the variance-covari
 * Number of parameters grows **quadratically** with dimensionality $d$.
 * **Unimodal**
 
+A very useful formula that is used to derive the formulae below regards the _kernel_ of the MVN
+$$-\frac{1}{2}(\vx - \vmu)^\top \Sigma^{-1}(\vx - \vmu) = -\frac{1}{2}\vx^\top \Sigma^{-1}\vx + \vx^\top \Sigma^{-1} \vmu + \text{const}$$
+
 ### Geometry of the Multivariate Normal Distribution
 **Eigendecomposing** $\Sigma^{-1}$ and using the change of variable $\vy = U^\top (\vx - \vmu)$, corresponding to centering the observations and rotating using the eigenvector matrix, we find that _every MVN under a linear coordinate transform is a product of $d$ univariate normals_:
 $$p(\vy) = \prod_{i=1}^d N_{y_i}(0, \lambda_i) \qquad \text{where } \lambda_i \text{ eigenvectors of } \Sigma^{-1}$$
@@ -352,7 +355,15 @@ p(\vx_a) = \int p(\vx_a, \vx_b) d\vx_b = N(\vmu_a, \Sigma_{aa})
 $$
 
 ### Maximum Likelihood Estimation of Multivariate Gaussian
-
+Suppose we have $N$ IID multivariate Gaussian observations $\left\{\vx_1, \ldots, \vx_N\right\}$, where $\vx_i\sim N(\vmu, \Sigma)$. Then
+$$
+\begin{align}
+\vmu_{\text{ML}} &= \frac{1}{N} \sum_{i=1}^N \vx_i \\
+\Sigma_{\text{ML}} &= \frac{1}{N} \sum_{i=1}^N (\vx_i - \vmu_{\text{ML}})(\vx_i - \vmu_{\text{ML}})^\top
+\end{align}
+$$
+Notice that while the maximum likelihood estimate of the mean is **unbiased** $\Ebb[\vmu_{\text{ML}}] = \vmu$ the maximum likelihood estimate of the covariance matrix is **biased**
+$$\Ebb\left[\Sigma_{\text{ML}}\right] = \frac{N - 1}{N}\Sigma$$
 
 
 
