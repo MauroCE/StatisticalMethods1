@@ -3,9 +3,13 @@ title: "Statistical Methods 1"
 output:
   html_document:
     toc: true
-    toc_float: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
     toc_depth: 4
     css: style.css
+    theme: united
+    highlight: tango
 ---
 
 <style>
@@ -13,6 +17,17 @@ output:
         max-width: 1800px;
     }
 </style>
+
+<script>
+$(document).ready(function() {
+  $items = $('div#TOC li');
+  $items.each(function(idx) {
+    num_ul = $(this).parentsUntil('#TOC').length;
+    $(this).css({'text-indent': num_ul * 20, 'padding-left': 0});
+  });
+
+});
+</script>
 
 <!--- For HTML Only --->
 `r if (!knitr:::is_latex_output()) '
@@ -127,6 +142,17 @@ $\\newcommand{\\var}{\\mathrm{Var}}$
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{js, echo=FALSE}
+function myFunction() {
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
 ```
 
 ## Course Description
@@ -248,7 +274,7 @@ However, this classifier is **unpractical** because in reality
 
 ### Expected Loss Minimization 
 Therefore, we introduce a **loss function** $L(y, y_0)$ which is described by a **loss matrix** whose entries give the loss of predicting $y_0$ when the actual value is $y$. Our goal then becomes to **minimize expected loss**
-$$\yhat = \argmin_{y_0} \Ebb_{p(y\mid \vx, D)}\left[y \mid \vx\right]$$
+$$\yhat = \argmin_{y_0} \Ebb_{p(y\mid \vx, D)}\left[L(y, y_0) \mid \vx\right]$$
 where $p(y \mid \vx, D)$ can be found with either the Fully Bayesian approach, or we can find $\vw_{\text{ML}}$ or $\vw_{\text{MAP}}$ first, and then plug them in to obtain the distribution. 
 
 Notice that in general there are two strategies to find $p(y \mid \vx, D)$:
@@ -266,9 +292,10 @@ $$\max\left\{ p(y = +1\mid \vx), \, p(y=-1\mid \vx)\right\} < \theta$$
 ### Decision Making in Regression Tasks
 $$\yhat \approx 
 \begin{cases}
-\Ebb_{p(y\mid \vx, D)}\left[y \mid \vx\right] && \text{if } L=(y-y_0)^2 \\
+\Ebb_{p(y\mid \vx, D)}\left[L(y, y_0)\mid \vx\right] && \text{if } L=(y-y_0)^2 \\
 \text{Predictive median of } p(y \mid \vx, D) && \text{if } L=|y-y_0|
 \end{cases}$$
+Basically if we use a squared loss, our prediction $\yhat$ will be the same as the one found by using the fully-Bayesian approach or the MAP approach.
 
 ## Probability Review: Gaussian Identities
 ### Gaussian Distribution and Central Limit Theorem
@@ -290,8 +317,51 @@ where $\vmu\in\Rbb^{d}$ and $\Sigma\in \Rbb^{d\times d}$ and the variance-covari
 
 ### Geometry of the Multivariate Normal Distribution
 We define the **Mahalanobis distance** as 
-$$(\vx - \vmu)^\top \Sigma^{-1}(\vx-\vmu)$$
-this is a _rotated_ and _shifted_ Euclidean geometry.
+$$\triangle^2 = (\vx - \vmu)^\top \Sigma^{-1}(\vx-\vmu)$$
+this is a _rotated_ and _shifted_ Euclidean geometry. Using the **eigendecomposition** on $\Sigma^{-1}=UD^{-1}U^\top$ and using the change of variable $\vy = U^\top (\vx - \vmu)\in\Rbb^{d}$ the MVN can be rewritten (see <button onclick="myFunction()">Proof</button>) as:
+
+<div id="myDIV" style='display: none'>
+   We can consider $\Sigma^{-1}$ to be _symmetric_ without loss of generality. Notice that $\triangle^2$ is just a number and therefore it is equal to its transpose, that is
+$$\triangle^2 = (\vx - \vmu)^\top \Sigma^{-1}(\vx-\vmu) = (\vx - \vmu)^\top (\Sigma^{-1})^\top(\vx - \vmu) = (\triangle^2)^\top$$
+
+This means that we can write $\triangle^2$ as
+$$\triangle^2 = \frac{\triangle^2 + (\triangle^2)^\top}{2} = (\vx - \vmu)^\top \left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)(\vx - \vmu) = (\vx - \vmu)^\top\Sigma^{-1}(\vx - \vmu)$$
+
+And it is clear that we can consider $\Sigma^{-1}$ to be symmetric because we can replace it with $\left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)$ and this is clearly symmetric:
+$$\left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right) = \left(\frac{1}{2}\Sigma^{-1} + \frac{1}{2}(\Sigma^{-1})^\top\right)^\top$$
+Therefore it can be decomposed as $\Sigma^{-1} = UDU^\top$ where $U\in\Rbb^{d\times d}$ is an _orthogonal matrix_ whose columns are the **eigenvectors** of $\Sigma^{-1}$, and $D\in\Rbb^{d\times d}$ is a **diagonal** matrix whose elements are the respective **eigenvalues**. Define $\vy = U^\top (\vx- \vmu) = \sum_i y_i^2 D_i$ and we want to write the density for the random variable $Y$. Notice that since $U$ is orthogonal we have that $U^\top = U^{-1}$ which means that $\vx = U\vy + \vmu$. The change of variables to find $p(\vy)$ then is found using the formula
+$$f_Y(\vy) = f_X(\vx)(U\vy + \vmu)\left|J\right|$$
+where $|J|$ is the determinant of the Jacobian with elements 
+$$J_{ij}:=\frac{\partial x_i}{\partial y_j} = \frac{\partial}{\partial y_j}\left(\sum_{k=1}^n U_{ik}y_k \, +\, \mu_i\right)$$
+$$p(\vx) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}} \exp\left(-\frac{1}{2} \sum_{i=1}^n y_i^2 D_i\right) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\prod_{i=!}^n \exp\left(-\frac{1}{2}y_i^2D_i\right)$$
+where $D_i$ are the diagonal elements of $D$, i.e. the eigenvalues of $\Sigma^{-1}$. This leads to
+</div>
+$$p(\vx) = \prod_{i=1}^n $$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
