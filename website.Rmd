@@ -15,10 +15,18 @@ fontsize: 15pt
     }
 </style>
 
+<!--- For HTML Only --->
+`r if (!knitr:::is_latex_output()) '
+$\\DeclareMathOperator*{\\argmin}{arg\\,min}$
+$\\DeclareMathOperator*{\\argmax}{arg\\,max}$
+$\\newcommand{\\var}{\\mathrm{Var}}$
+'`
+
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{amsthm}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{listings}
 \usepackage{color}
@@ -31,6 +39,12 @@ fontsize: 15pt
 \usepackage{bm}
 \usepackage{algorithm2e}
 
+
+\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}} % inner command, used by \rchi
+\newenvironment{rcases}
+  {\left.\begin{aligned}}
+  {\end{aligned}\right\rbrace}
 \newcommand{\def}{\overset{\text{def}}{:=}}
 \newcommand{\lop}{\mathcal{L}}
 \newcommand{\vect}[1]{\boldsymbol{\mathbf{#1}}}
@@ -73,7 +87,7 @@ fontsize: 15pt
 \newcommand{\dataset}{\mathcal{D}}
 \newcommand{\vS}{\vect{S}}
 \newcommand{\sample}{\vz^{(l)}}
-\newcommand{\MYhref}[3][blue]{\href{#2}{\color{#1}{#3}}}
+\newcommand{\MYhref}[3][blue]{\href{#2}{\color{#1}{#3}}}%
 \newcommand{\sol}[1]{\vx^{(#1)}}
 \newcommand{\qtext}[1]{\quad\quad \text{#1}}
 \newcommand{\vtheta}{\vect{\theta}}
@@ -118,7 +132,6 @@ fontsize: 15pt
     \end{equation*}
 }
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -133,7 +146,7 @@ Repository containing summary of notes for the [Statistical Methods 1](https://w
 ### Problem Statement and Assumptions
 Given a **training**  dataset 
 $$D_0:= \left\{(\vx_i, y_i)\right\}_{i=1}^n$$
-of $n$ pairs of inputs $\vx_i\in\Rbb^{d\times 1}$ and outputs $y_i\in \Rbb$ we want to **predict** the output $\yhat$ for a new input $\vxhat$ by _inferring_ the **parameters** $\vw\in \Rbb^{(d+1)\times 1}$ of a  **prediction function** $f(\vx, \vw)$.
+of $n$ pairs of inputs $$\vx_i\ = (x_{1i}, \ldots, x_{di})\in\Rbb^{d\times 1}$$ and outputs $y_i\in \Rbb$ we want to **predict** the output $\yhat$ for a new input $\vxhat$ by _inferring_ the **parameters** $\vw\in \Rbb^{(d+1)\times 1}$ of a  **prediction function** $f(\vx, \vw)$.
 
 ### Measuring Performance and Model Selection
 We want $f(\vx, \vw)$ to perform well on **unseen testing data** $D_1$. In other words, we want our model to **generalize** well. We define the **error** on a dataset $D'$ given the inferred parameters $\vw^*$ as 
@@ -149,7 +162,7 @@ We could split our dataset into training set $D_0$ and testing set $D_1$, howeve
 
 * Split the dataset into $s$ groups $D_1, \ldots, D_s$ called **folds**. We then call it **s-fold cross validation**. In the extreme case in which $s=n$, i.e. each group consists of one data point, we call it **leave-one-out** cross validation.
 * Use $s-1$ groups to infer $\vw^*$. Test performance of $f(\vx, \vw^*)$ on the remaining unseen group, and calculate $E(D_i, \vw^{*^{(i)}})$. Repeat this until all groups have been used for testing exactly once.
-* At the end, calculate the mean test error $\frac{1}{2}$  $$E_{\text{cv}} = \frac{1}{s+1}\sum_{i=1}^s E(D_i, \vw^{*^{(i)}})$$
+* At the end, calculate the mean test error  $$E_{\text{cv}} = \frac{1}{s+1}\sum_{i=1}^s E(D_i, \vw^{*^{(i)}})$$
 
 Cross validation can be used to choose between **competing models**. Thus, it is often used for **model selection** when a model has one or more **hyperparameters** that needs to be estimated. The main problems with Cross Validation are:
 
@@ -164,6 +177,49 @@ $$X =
   \vx_1 & \vx_2 & \cdots & \vx_n \\
   1 & 1 & \cdots 1
 \end{pmatrix}
+=
+\begin{pmatrix}
+  x_{11} & x_{12} & \cdots & x_{1n} \\
+  x_{21} & x_{22} & \cdots & x_{2n} \\
+  \vdots & \vdots & \vdots & \vdots \\
+  x_{d1} & x_{d2} & \cdots & x_{dn} \\
+  1 & 1 & \cdots & 1 
+\end{pmatrix}
 \in \Rbb^{(b+1)\times n}
 $$
+
+The **response vector** is a _row_ vector containing all $n$ observations of the target variable.
+$$\vy = (y_1, \ldots, y_n)\in \Rbb^{1\times n}$$
+We call the function 
+
+$$\phi:\Rbb^d\to\Rbb^b$$
+a **feature transform** and will be used to make inference more flexible. Sometimes we will write $\phi(X)$, this is a short-hand notation for the following matrix
+$$
+\phi(X) = 
+\begin{pmatrix}
+  \phi(\vx_1) & \phi(\vx_2) & \cdots & \phi(\vx_n) \\
+  1 & 1 & \cdots & 1
+\end{pmatrix}
+\in \Rbb^{(b+1)\times n}
+$$
+There are $2$ main non-bayesian inference methods that we look at:
+
+
+* **Linear Least Squares**: Finds parameters $\vw_{\text{LS}}\in\Rbb^{(b+1)\times 1}$ that minimize the _sum of squares residuals_ 
+
+  $$\vw_{\text{LS}}:= \argmin_{\vw} \sum_{i\in D_0} \left(y_i  - f(\phi(\vx_i), \vw)\right)^2 = \left(\phi(X)\phi(X)^\top\right)^{-1}\phi(X)\vy^\top$$
+  where $f(\phi(\vx_i), \vw)$ is the _dot product_ between the $i^{\text{th}}$ column of $\phi(X)$ and $\vw$. It is important to understand that it's called _linear_ because it is linear in the _unknown parameters_ $\vw$, but can be _non-linear_ in the inputs if we apply a *non-linear* feature transform $\phi$. 
+
+* **Maximum Likelihood Estimation**: Finds parameters $\vw_{\text{ML}}$ describing a joint probability density function for $\vy$ that has _maximum density_ values at our data points
+  $$
+  \vw_{\text{ML}} = \argmax_{\vw} \,\,\,p(\vy \mid \phi(\vx_1), \ldots, \phi(\vx_n), \vw, \sigma)
+  $$
+    Assuming $y_i$ are **IID** and **normally distributed**, Maximum likelihood and Least Squares lead to the same solution $\vw_{\text{LS}} = \vw_{\text{ML}}$. The advantage of Maximum Likelihood over Least Squares is that by finding $\sigma^2_{\text{ML}}$ we obtain a **measure of uncertainty** on our prediction.
+
+### Issues with Non-Bayesian Inference Methods
+
+
+
+
+
 

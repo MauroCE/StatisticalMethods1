@@ -1521,7 +1521,13 @@ div.tocify {
         max-width: 1800px;
     }
 </style>
+<!--- For HTML Only --->
+<p><span class="math inline">\(\DeclareMathOperator*{\argmin}{arg\,min}\)</span> <span class="math inline">\(\DeclareMathOperator*{\argmax}{arg\,max}\)</span> <span class="math inline">\(\newcommand{\var}{\mathrm{Var}}\)</span></p>
 
+
+% inner command, used by 
+
+%
 
 <div id="course-description" class="section level2">
 <h2>Course Description</h2>
@@ -1531,7 +1537,7 @@ div.tocify {
 <h2>Regression Problems</h2>
 <div id="problem-statement-and-assumptions" class="section level3">
 <h3>Problem Statement and Assumptions</h3>
-<p>Given a <strong>training</strong> dataset <span class="math display">\[D_0:= \left\{(\boldsymbol{\mathbf{x}}_i, y_i)\right\}_{i=1}^n\]</span> of <span class="math inline">\(n\)</span> pairs of inputs <span class="math inline">\(\boldsymbol{\mathbf{x}}_i\in\mathbb{R}^{d\times 1}\)</span> and outputs <span class="math inline">\(y_i\in \mathbb{R}\)</span> we want to <strong>predict</strong> the output <span class="math inline">\(\widehat{y}\)</span> for a new input <span class="math inline">\(\widehat{\boldsymbol{\mathbf{x}}}\)</span> by <em>inferring</em> the <strong>parameters</strong> <span class="math inline">\(\boldsymbol{\mathbf{w}}\in \mathbb{R}^{(d+1)\times 1}\)</span> of a <strong>prediction function</strong> <span class="math inline">\(f(\boldsymbol{\mathbf{x}}, \boldsymbol{\mathbf{w}})\)</span>.</p>
+<p>Given a <strong>training</strong> dataset <span class="math display">\[D_0:= \left\{(\boldsymbol{\mathbf{x}}_i, y_i)\right\}_{i=1}^n\]</span> of <span class="math inline">\(n\)</span> pairs of inputs <span class="math display">\[\boldsymbol{\mathbf{x}}_i\ = (x_{1i}, \ldots, x_{di})\in\mathbb{R}^{d\times 1}\]</span> and outputs <span class="math inline">\(y_i\in \mathbb{R}\)</span> we want to <strong>predict</strong> the output <span class="math inline">\(\widehat{y}\)</span> for a new input <span class="math inline">\(\widehat{\boldsymbol{\mathbf{x}}}\)</span> by <em>inferring</em> the <strong>parameters</strong> <span class="math inline">\(\boldsymbol{\mathbf{w}}\in \mathbb{R}^{(d+1)\times 1}\)</span> of a <strong>prediction function</strong> <span class="math inline">\(f(\boldsymbol{\mathbf{x}}, \boldsymbol{\mathbf{w}})\)</span>.</p>
 </div>
 <div id="measuring-performance-and-model-selection" class="section level3">
 <h3>Measuring Performance and Model Selection</h3>
@@ -1546,7 +1552,7 @@ div.tocify {
 <ul>
 <li>Split the dataset into <span class="math inline">\(s\)</span> groups <span class="math inline">\(D_1, \ldots, D_s\)</span> called <strong>folds</strong>. We then call it <strong>s-fold cross validation</strong>. In the extreme case in which <span class="math inline">\(s=n\)</span>, i.e. each group consists of one data point, we call it <strong>leave-one-out</strong> cross validation.</li>
 <li>Use <span class="math inline">\(s-1\)</span> groups to infer <span class="math inline">\(\boldsymbol{\mathbf{w}}^*\)</span>. Test performance of <span class="math inline">\(f(\boldsymbol{\mathbf{x}}, \boldsymbol{\mathbf{w}}^*)\)</span> on the remaining unseen group, and calculate <span class="math inline">\(E(D_i, \boldsymbol{\mathbf{w}}^{*^{(i)}})\)</span>. Repeat this until all groups have been used for testing exactly once.</li>
-<li>At the end, calculate the mean test error <span class="math inline">\(\frac{1}{2}\)</span> <span class="math display">\[E_{\text{cv}} = \frac{1}{s+1}\sum_{i=1}^s E(D_i, \boldsymbol{\mathbf{w}}^{*^{(i)}})\]</span></li>
+<li>At the end, calculate the mean test error <span class="math display">\[E_{\text{cv}} = \frac{1}{s+1}\sum_{i=1}^s E(D_i, \boldsymbol{\mathbf{w}}^{*^{(i)}})\]</span></li>
 </ul>
 <p>Cross validation can be used to choose between <strong>competing models</strong>. Thus, it is often used for <strong>model selection</strong> when a model has one or more <strong>hyperparameters</strong> that needs to be estimated. The main problems with Cross Validation are:</p>
 <ul>
@@ -1562,8 +1568,35 @@ div.tocify {
   \boldsymbol{\mathbf{x}}_1 &amp; \boldsymbol{\mathbf{x}}_2 &amp; \cdots &amp; \boldsymbol{\mathbf{x}}_n \\
   1 &amp; 1 &amp; \cdots 1
 \end{pmatrix}
+=
+\begin{pmatrix}
+  x_{11} &amp; x_{12} &amp; \cdots &amp; x_{1n} \\
+  x_{21} &amp; x_{22} &amp; \cdots &amp; x_{2n} \\
+  \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\
+  x_{d1} &amp; x_{d2} &amp; \cdots &amp; x_{dn} \\
+  1 &amp; 1 &amp; \cdots &amp; 1 
+\end{pmatrix}
 \in \mathbb{R}^{(b+1)\times n}
 \]</span></p>
+<p>The <strong>response vector</strong> is a <em>row</em> vector containing all <span class="math inline">\(n\)</span> observations of the target variable. <span class="math display">\[\boldsymbol{\mathbf{y}}= (y_1, \ldots, y_n)\in \mathbb{R}^{1\times n}\]</span> We call the function</p>
+<p><span class="math display">\[\phi:\mathbb{R}^d\to\mathbb{R}^b\]</span> a <strong>feature transform</strong> and will be used to make inference more flexible. Sometimes we will write <span class="math inline">\(\phi(X)\)</span>, this is a short-hand notation for the following matrix <span class="math display">\[
+\phi(X) = 
+\begin{pmatrix}
+  \phi(\boldsymbol{\mathbf{x}}_1) &amp; \phi(\boldsymbol{\mathbf{x}}_2) &amp; \cdots &amp; \phi(\boldsymbol{\mathbf{x}}_n) \\
+  1 &amp; 1 &amp; \cdots &amp; 1
+\end{pmatrix}
+\in \mathbb{R}^{(b+1)\times n}
+\]</span> There are <span class="math inline">\(2\)</span> main non-bayesian inference methods that we look at:</p>
+<ul>
+<li><p><strong>Linear Least Squares</strong>: Finds parameters <span class="math inline">\(\boldsymbol{\mathbf{w}}_{\text{LS}}\in\mathbb{R}^{(b+1)\times 1}\)</span> that minimize the <em>sum of squares residuals</em></p>
+<p><span class="math display">\[\boldsymbol{\mathbf{w}}_{\text{LS}}:= \argmin_{\boldsymbol{\mathbf{w}}} \sum_{i\in D_0} \left(y_i  - f(\phi(\boldsymbol{\mathbf{x}}_i), \boldsymbol{\mathbf{w}})\right)^2 = \left(\phi(X)\phi(X)^\top\right)^{-1}\phi(X)\boldsymbol{\mathbf{y}}^\top\]</span> where <span class="math inline">\(f(\phi(\boldsymbol{\mathbf{x}}_i), \boldsymbol{\mathbf{w}})\)</span> is the <em>dot product</em> between the <span class="math inline">\(i^{\text{th}}\)</span> column of <span class="math inline">\(\phi(X)\)</span> and <span class="math inline">\(\boldsymbol{\mathbf{w}}\)</span>. It is important to understand that it’s called <em>linear</em> because it is linear in the <em>unknown parameters</em> <span class="math inline">\(\boldsymbol{\mathbf{w}}\)</span>, but can be <em>non-linear</em> in the inputs if we apply a <em>non-linear</em> feature transform <span class="math inline">\(\phi\)</span>.</p></li>
+<li><p><strong>Maximum Likelihood Estimation</strong>: Finds parameters <span class="math inline">\(\boldsymbol{\mathbf{w}}_{\text{ML}}\)</span> describing a joint probability density function for <span class="math inline">\(\boldsymbol{\mathbf{y}}\)</span> that has <em>maximum density</em> values at our data points <span class="math display">\[
+\boldsymbol{\mathbf{w}}_{\text{ML}} = \argmax_{\boldsymbol{\mathbf{w}}} \,\,\,p(\boldsymbol{\mathbf{y}}\mid \phi(\boldsymbol{\mathbf{x}}_1), \ldots, \phi(\boldsymbol{\mathbf{x}}_n), \boldsymbol{\mathbf{w}}, \sigma)
+\]</span> Assuming <span class="math inline">\(y_i\)</span> are <strong>IID</strong> and <strong>normally distributed</strong>, Maximum likelihood and Least Squares lead to the same solution <span class="math inline">\(\boldsymbol{\mathbf{w}}_{\text{LS}} = \boldsymbol{\mathbf{w}}_{\text{ML}}\)</span>. The advantage of Maximum Likelihood over Least Squares is that by finding <span class="math inline">\(\sigma^2_{\text{ML}}\)</span> we obtain a <strong>measure of uncertainty</strong> on our prediction.</p></li>
+</ul>
+</div>
+<div id="issues-with-non-bayesian-inference-methods" class="section level3">
+<h3>Issues with Non-Bayesian Inference Methods</h3>
 </div>
 </div>
 
