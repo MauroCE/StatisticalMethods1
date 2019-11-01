@@ -51,6 +51,7 @@ $\\newcommand{\\var}{\\mathrm{Var}}$
 \usepackage{fullpage}
 \usepackage{color}
 \usepackage{bm}
+\usepackage{mathtools}
 \usepackage{algorithm2e}
 \newcommand{\def}{\overset{\text{def}}{:=}}
 \newcommand{\lop}{\mathcal{L}}
@@ -377,8 +378,19 @@ $$
 Notice that while the maximum likelihood estimate of the mean is **unbiased** $\Ebb[\vmu_{\text{ML}}] = \vmu$ the maximum likelihood estimate of the covariance matrix is **biased**
 $$\Ebb\left[\Sigma_{\text{ML}}\right] = \frac{N - 1}{N}\Sigma$$
 
-
-
+## Bias-Variance Decomposition
+The **training error** $E[D, \vw_{\text{LS}}]$ is evaluated only on the specific dataset $D$. We call **in-sample error** the training error on all possible datasets
+$$\Ebb_D\left[E[D, \vw_{\text{LS}}]\right] = \sum_{i=1}^n \Ebb_D\left[[y_i - f(\vx_i; \vw_{\text{LS}})]\mid\vx_i\right]$$
+where $\Ebb_D\left[[y_i - f(\vx_i; \vw_{\text{LS}})]\mid\vx_i\right]$ is called _expected error_ and can be decomposed as follows
+$$
+\Ebb_D\left[[y_i - f(\vx_i; \vw_{\text{LS}})]\mid\vx_i\right] = \underbrace{\Var_{\epsilon}[\epsilon_i]}_{\text{irreducible error}} + \underbrace{(g(\vx_i) - \Ebb_{\epsilon}[f(\vx_i; \vw_{\text{LS}})])^2}_{\text{bias}} + \underbrace{\Var_{\epsilon}[f(\vx_i; \vw_{\text{LS}})]}_{\text{variance}}
+$$
+This cannot be calculated cause we don't know the distribution of $\epsilon$ and we don't know $g(\vx_i)$. Thus we actually use the **out-sample error**:
+$$
+\Ebb_{\vx}[\Ebb_{\epsilon}[(y_i - f(\vx_i; \vw_{\text{LS}}))]] = \Ebb_{p(y, \vx)}[(y-f(\vx_i; \vw_{\text{LS}}))^2]
+$$
+If we have a _new batch of data_ $D':=\left\{(y_i', \vx_i')\right\}_{i=1}^{n'}$ we see that the out-sample error can be approximated by the **testing error** thanks to the **Law of Large Numbers**:
+$$\frac{1}{n'}\sum_{i=1}^{n'} (y_i' - f(\vx_i'; \vw_{\text{LS}}))^2  \quad \overset{\text{LLN}}{\longrightarrow} \quad \Ebb_{p(y, \vx)}\left[(y_i - f(\vx_i; \vw_{\text{LS}}))^2\right]$$
 
 
 
